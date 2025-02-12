@@ -1,0 +1,15 @@
+.dashboard-container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .dashboard-container h2 {
+    color: #4CAF50;
+    font-size: 36px;
+  }
+  
+  .dashboard-container p {
+    font-size: 18px;
+    color: #555;
+  }
+  

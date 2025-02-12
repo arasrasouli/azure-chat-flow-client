@@ -1,0 +1,1 @@
+Azure Functions Text Analyzer App

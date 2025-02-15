@@ -19,7 +19,7 @@ import { useMSAzureBlobStorage } from "~/composables/useMSAzureBlobStorage";
 import { ifFileTypeIsTxt } from "~/utils/fileUtility";
 import { useMSAuth } from '~/composables/useMSAuth';
 
-const { isAuthenticated, acquireTokenSilent } = useMSAuth();
+const { isAuthenticated } = useMSAuth();
 
 const {
   selectedFile,
@@ -41,9 +41,10 @@ const fileSize = computed(() => {
 });
 
 const fileInput = ref<HTMLInputElement | null>(null);
+const authenticated = ref(isAuthenticated.value);
 
 const uploadFile = async () => {
-  if (!isAuthenticated()) {
+  if (!authenticated) {
     uploadStatus.value = { message: "You must be signed in to upload files." , color: "red" };
     return;
   }

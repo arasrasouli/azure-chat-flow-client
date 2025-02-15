@@ -1,35 +1,32 @@
 <template>
-    <button v-if="!isAuthenticatedRef" @click="handleLogin">Login</button>
-    <button v-else @click="handleLogout">Logout</button>
+  <div>
+    <button v-if="!isAuthenticated" @click="handleSignIn">Sign In</button>
+    <button v-if="isAuthenticated" @click="handleSignOut">Sign Out</button>
+  </div>
 </template>
-  
+
 <script setup>
-import { useMSAuth } from "~/composables/useMSAuth";
-import { useRouter } from "vue-router";
+import { defineEmits } from 'vue';
+import { useMSAuth } from '~/composables/useMSAuth';
+import { useRouter } from 'vue-router';
 
-const { signIn, signOut, isAuthenticated, getAccounts } = useMSAuth();
+const { isAuthenticated, signIn, signOut } = useMSAuth();
 const router = useRouter();
+const emit = defineEmits(['auth-updated']);
 
-const isAuthenticatedRef = useState("isAuthenticated", () => isAuthenticated());
-
-const handleLogin = async () => {
+const handleSignIn = async () => {
   await signIn();
-  isAuthenticatedRef.value = isAuthenticated();
-
-  if (isAuthenticatedRef.value) {
-    router.push("/dashboard");
-  }
+  emit('auth-updated', true);
+  router.push("/dashboard");
 };
 
-const handleLogout = async () => {
+const handleSignOut = async () => {
   await signOut();
-  isAuthenticatedRef.value = isAuthenticated();
-  if (!isAuthenticatedRef.value) {
-    router.push("/home");
-  }  
+  emit('auth-updated', false);
+  router.push("/");
 };
+
 </script>
-  
 
 <style scoped>
 button {

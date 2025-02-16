@@ -1,9 +1,10 @@
-
-export const dashboardData = {
+const pageData = {
   title: 'Dashboard',
   description: 'Welcome to your dashboard ...',
 };
 
-export function getWelcomeMessage() {
-  return dashboardData.description;
-}
+const getWelcomeMessage = function() {
+  return pageData.description;
+};
+
+export { getWelcomeMessage, pageData };

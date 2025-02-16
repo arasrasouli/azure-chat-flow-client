@@ -2,31 +2,17 @@
   <div class="dashboard-container">
     <h2>{{ getWelcomeMessage() }}</h2>
     <div>
-    <h2>Upload File</h2>
-    <FileUpload @file-selected="onFileSelected" @upload="handleUpload" />
-  </div>
+      <h2>Upload File</h2>
+      <FileUpload />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { getWelcomeMessage } from './dashboard';
-import { useRouter } from '#imports'; 
+import { pageData, getWelcomeMessage } from './dashboard';
 import FileUpload from "~/components/FileUpload.vue";
 import './dashboard.css';
-
-const router = useRouter();
-
 useHead({
-  title: 'Dashboard',
+  title: pageData.title,
 });
-
-
-const onFileSelected = (file) => {
-  console.log("Selected File:", file);
-};
-
-const handleUpload = async (file) => {
-  console.log("Uploading File:", file);
-  // TODO: Call API or upload directly to Azure Storage
-};
 </script>

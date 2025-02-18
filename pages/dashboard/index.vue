@@ -10,10 +10,10 @@
 </template>
 
 <script setup>
-import { pageData, getWelcomeMessage } from './dashboard';
+import { pageData, getWelcomeMessage } from "./dashboard";
 import FileUpload from "~/components/FileUpload.vue";
-import WordsCountComponent from '~/components/WordsCountComponent.vue';
-import './dashboard.css';
+import WordsCountComponent from "~/components/WordsCountComponent.vue";
+import "~/assets/pages/dashboard.css";
 
 useHead({
   title: pageData.title,

@@ -18,6 +18,7 @@ import { computed, ref } from "vue";
 import { useMSAzureBlobStorage } from "~/composables/useMSAzureBlobStorage";
 import { ifFileTypeIsTxt } from "~/utils/fileUtility";
 import { useMSAuth } from '~/composables/useMSAuth';
+import "~/assets/components/fileUpload.css";
 
 const { isAuthenticated } = useMSAuth();
 
@@ -78,40 +79,3 @@ const resetFileInput = () => {
   }
 };
 </script>
-
-<style scoped>
-.upload-container {
-  border: 1px solid #ddd;
-  padding: 20px;
-  text-align: center;
-  max-width: 600px;
-  margin: auto;
-  border-radius: 8px;
-  background: #f9f9f9;
-}
-
-input {
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px 20px;
-  margin: 10px;
-  background-color: #0078d4;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:disabled {
-  background: gray;
-  cursor: not-allowed;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
-}
-</style>

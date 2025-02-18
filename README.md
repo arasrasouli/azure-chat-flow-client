@@ -38,6 +38,8 @@ NUXT_PUBLIC_AZURE_STORAGE_ACCOUNT_NAME=your-storage-account-name
 NUXT_PUBLIC_AZURE_SAS_TOKEN=your-sas-token
 NUXT_PUBLIC_AZURE_CONTAINER_NAME=your-container-name
 NUXT_PUBLIC_AZURE_USE_EMULATOR=true  # Set to false if using Azure services directly
+NUXT_PUBLIC_AZURE_SERVICE_BUS_CONNECTION_STRING="<service-bus-namespace-connection-string>"
+NUXT_PUBLIC_AZURE_SERVICE_BUS_QUEUE_NAME=<queue-name>
 ```
 
 ## Related Repositories

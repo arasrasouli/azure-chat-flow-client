@@ -4,6 +4,7 @@
     <div>
       <h2>Upload File</h2>
       <FileUpload />
+      <WordsCountComponent />
     </div>
   </div>
 </template>
@@ -11,7 +12,9 @@
 <script setup>
 import { pageData, getWelcomeMessage } from './dashboard';
 import FileUpload from "~/components/FileUpload.vue";
+import WordsCountComponent from '~/components/WordsCountComponent.vue';
 import './dashboard.css';
+
 useHead({
   title: pageData.title,
 });

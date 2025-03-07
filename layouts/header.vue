@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <header class="header">
-      <h1>Text Analyzer App</h1>
+      <h1>Azure Chat Flow Client</h1>
       <nav>
         <NuxtLink to="/">Home</NuxtLink>
         <NuxtLink v-if="authenticated" to="/dashboard">Dashboard</NuxtLink>

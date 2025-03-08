@@ -1,4 +1,4 @@
-# Azure Functions Text Analyzer Client App
+# Azure Chat Flow Client App
 
 ![npm](https://img.shields.io/badge/npm-v11.1.0-blue?logo=npm)
 ![Vue](https://img.shields.io/badge/Vue-3.3.4-green?logo=vuedotjs)
@@ -9,8 +9,8 @@
 ![Service Bus](https://img.shields.io/badge/Service_Bus-0089D6?logo=microsoftazure)
 ![MS Auth](https://img.shields.io/badge/MS_Auth-0089D6?logo=microsoftazure)
 
-
-The **Azure Functions Text Analyzer Client App** is a **Nuxt 3** application built with **Vue 3** and **TypeScript** for securely uploading and analyzing text files. It integrates with **Azure Blob Storage** for file storage and **Azure Service Bus** for message processing, ensuring efficient and scalable text analysis.  
+🚧 **UNDER DEVELOPMENT** 🚧  
+The **Azure Chat Flow Client App** is a Vue.js and Nuxt.js powered frontend for a chat application using Azure SignalR for real-time messaging. Integrated with Azure AD for authentication and Azure Table Storage for chat message storage. Designed for scalable and secure communication in cloud environments..  
 
 ## Features  
 - **User Authentication** – Secure login with **Microsoft Authentication (MSAuth)**.  
@@ -22,7 +22,7 @@ The **Azure Functions Text Analyzer Client App** is a **Nuxt 3** application bui
 - **Nuxt 3**  
 - **Vue 3**  
 - **TypeScript**  
-- **Azure Blob Storage**  
+- **Azure Table Storage**  
 - **Azure Service Bus**  
 - **MSAuth (Microsoft Authentication)**  
 
@@ -43,7 +43,7 @@ NUXT_PUBLIC_AZURE_SERVICE_BUS_QUEUE_NAME=<queue-name>
 ```
 
 ## Related Repositories
-🔗 [Azure Functions Text Analyzer Server](https://github.com/arasrasouli/AzureFunctions-TextAnalyzer-Server) – Backend service handling text processing and message queue management.
+
 
 
 

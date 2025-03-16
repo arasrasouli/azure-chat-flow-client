@@ -15,10 +15,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, defineProps, onMounted, ref } from 'vue';
 import { useAzureUsers } from '~/composables/useAzureUsers';
 import '~/assets/components/userList.css';
+import type { AdUser } from '~/types/userType';
 
 const props = defineProps({
   currentUser: String,
@@ -38,35 +39,19 @@ onMounted(async () => {
 });
 
 const filteredUsers = computed(() => {
-  const current = props.currentUser || 'unknown';
-  const filtered = users.value.filter(user => {
-    const excludeByEmail = user.userPrincipalName !== current;
-    const excludeByName = user.displayName !== current;
-    console.log('Comparing:', {
-      userPrincipalName: user.userPrincipalName,
-      displayName: user.displayName,
-      currentUser: current,
-      excluded: excludeByEmail && excludeByName
-    });
-    return excludeByEmail && excludeByName;
-  });
-  console.log('Filtered users (excluding current user):', filtered.map(u => ({
-    id: u.id,
-    displayName: u.displayName,
-    userPrincipalName: u.userPrincipalName
-  })));
-  return filtered;
+  const currentUserId = props.currentUser ?? 'unknown';
+  return users.value.filter(user => user.id !== currentUserId);
 });
 
 const emitSelectedUser = () => {
-  const selected = filteredUsers.value.find(user => user.userPrincipalName === selectedUser.value);
-  console.log('Selected user:', { 
-    userPrincipalName: selectedUser.value, 
-    displayName: selected?.displayName 
-  });
-  emit('user-selected', {
-    userPrincipalName: selectedUser.value,
-    displayName: selected?.displayName || selectedUser.value
-  });
+  const selected: AdUser | undefined = filteredUsers.value.find(
+    user => user.userPrincipalName === selectedUser.value
+  );
+  
+  if (selected) {
+    emit('user-selected', selected);
+  } else {
+    console.warn('No user found for:', selectedUser.value);
+  }
 };
 </script>

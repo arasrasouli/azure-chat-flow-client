@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
 import { useMSAuth } from "~/composables/useMSAuth";
 import { useRouter } from "vue-router";
 import "~/assets/components/login.css";

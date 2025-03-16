@@ -5,8 +5,4 @@ export interface Message {
   date: Date;
 }
 
-export interface User {
-  id: string;
-  displayName: string;
-  userPrincipalName?: string;
-}
+// TODO: Consider defining a separate ChatUserProps interface

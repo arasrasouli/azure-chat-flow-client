@@ -19,6 +19,11 @@ export default defineNuxtConfig({
       AZURE_USE_EMULATOR: process.env.NUXT_PUBLIC_USE_EMULATOR,
       AZURE_SERVICE_BUS_CONNECTION_STRING: process.env.NUXT_PUBLIC_AZURE_SERVICE_BUS_CONNECTION_STRING,
       AZURE_SERVICE_BUS_QUEUE_NAME: process.env.NUXT_PUBLIC_AZURE_SERVICE_BUS_QUEUE_NAME,
+      AZURE_SIGNALR_CONNECTION_STRING: process.env.NUXT_PUBLIC_AZURE_SIGNALR_CONNECTION_STRING,
+      AZURE_SIGNALR_HUB_NAME: process.env.NUXT_PUBLIC_AZURE_SIGNALR_HUB_NAME,
+      API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL,
+      TEST_USERS: process.env.NUXT_PUBLIC_TEST_USERS || 'TestUser1,TestUser2,TestUser3',
+      AZURE_SCOPES: process.env.NUXT_PUBLIC_AZURE_SCOPES || 'User.Read.All',     
     },
   },
   plugins: ["~/plugins/msal.ts", "~/plugins/buffer-polyfill.ts"],
@@ -33,4 +38,7 @@ export default defineNuxtConfig({
       }
     },
   },
+  devServer: {
+    port: 3001
+  }  
 });

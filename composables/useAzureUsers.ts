@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { useMSAuth } from '~/composables/useMSAuth';
 import { AzureUsers } from '~/services/azureUsers';
+import type { AdUser } from '~/types/userType';
 
 export const useAzureUsers = () => {
   const { acquireTokenSilent, acquireTokenPopup } = useMSAuth();
@@ -10,7 +11,7 @@ export const useAzureUsers = () => {
   const scopes = ref((azureScopes).split(','));
 
   const azureUsersService = new AzureUsers(acquireTokenSilent, acquireTokenPopup, scopes.value);
-  const users = ref<{ id: string; displayName: string; userPrincipalName: string }[]>([]);
+  const users = ref<AdUser[]>([]);
   const errorMessage = ref<string>('');
 
   const getDomainUsers = async () => {

@@ -45,13 +45,13 @@
 }
 
 .sent {
-  margin-left: auto;
+  margin-right: auto;
   background: linear-gradient(135deg, #007bff, #00c4ff);
   color: #fff;
 }
 
 .received {
-  margin-right: auto;
+  margin-left: auto;
   background: linear-gradient(135deg, #28a745, #34c759);
   color: #fff;
 }

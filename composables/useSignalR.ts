@@ -16,7 +16,6 @@ export class UseSignalR {
         this.messages = ref<Message[]>([]);
     }
 
-    // Expose unwrapped getters for TypeScript
     get isConnectedValue(): boolean {
         return this.isConnected.value;
     }
@@ -34,8 +33,8 @@ export class UseSignalR {
         try {
             this.connectionStatus.value = 'Connecting...';
             const connectionId = await this.signalRService.startConnection(userId);
-            this.signalRService.onReceiveMessage((senderId, receiverId, message) => {
-                this.messages.value.push({ senderId: senderId, receiverId: receiverId, message, date: new Date() });
+            this.signalRService.onReceiveMessage((ReceivedMessage) => {
+                this.messages.value.push(ReceivedMessage);
             });
             this.signalRService.onClose(async () => {
                 await this.signalRService.unregisterConnection(userId);
@@ -64,10 +63,10 @@ export class UseSignalR {
         }
     }    
 
-    async sendMessage(senderId: string, receiverId: string, message: string): Promise<void> {
+    async sendMessage(message: Message): Promise<void> {
         try {
-            await this.signalRService.sendMessage(senderId, receiverId, message);
-            this.messages.value.push({ senderId: senderId, receiverId: receiverId, message, date: new Date() });
+            await this.signalRService.sendMessage(message);
+            this.messages.value.push(message);
         } catch (error) {
             throw error;
         }

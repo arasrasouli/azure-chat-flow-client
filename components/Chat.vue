@@ -13,7 +13,7 @@
       >
         <div class="message-content">
           <span class="message-text">{{ message.message }}</span>
-          <span class="message-time">{{ formatTime(message.date) }}</span>
+          <span class="message-time">{{ formatTime(message.sendAt) }}</span>
         </div>
       </div>
     </div>
@@ -41,6 +41,7 @@ import { ref, onMounted, nextTick } from 'vue';
 import { formatTime } from '~/utils/helpers/dateHelper';
 import { UseSignalR } from '~/composables/useSignalR';
 import '~/assets/components/chat.css';
+import type { Message } from '~/types/messageType';
 
 const props = defineProps<{
   senderId: string;
@@ -62,7 +63,14 @@ const sendMessage = async () => {
   if (!newMessage.value.trim() || !signalR.isConnectedValue) return;
 
   try {
-    await signalR.sendMessage(props.senderId, props.receiverId, newMessage.value.trim());
+    const message: Message = {
+      senderId: props.senderId,
+      receiverId: props.receiverId,
+      message: newMessage.value.trim(),
+      sendAt: new Date(Date.now()),
+    }
+    console.log(message);
+    await signalR.sendMessage(message);
     newMessage.value = '';
     
     nextTick(() => {

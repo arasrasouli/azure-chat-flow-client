@@ -1,4 +1,5 @@
 import * as signalR from '@microsoft/signalr';
+import type { Message } from '~/types/messageType';
 import type { NegotiateResponse } from '~/types/signalRTypes';
 
 export class SignalRService {
@@ -28,11 +29,16 @@ export class SignalRService {
         return this.connection.connectionId!;
     }
 
-    onReceiveMessage(callback: (senderId: string, receiverId: string, message: string) => void) {
-        this.connection?.on('ReceiveMessage', (senderId, receiverId, message) => {
+    onReceiveMessage(callback: (message: Message) => void) {
+        this.connection?.on('ReceiveMessage', (senderId: string, receiverId: string, message: string, sendAt: string) => {
             try {
-                console.log(`Received message from ${senderId} to ${receiverId}: ${message}`);
-                callback(senderId, receiverId, message);
+                const receivedMessage: Message = {
+                    senderId: senderId,
+                    receiverId: receiverId,
+                    message: message,
+                    sendAt: new Date(sendAt)
+                };
+                callback(receivedMessage);
             } catch (error) {
                 console.error(`Error processing received message from ${senderId} to ${receiverId}:`, error);
             }
@@ -64,20 +70,25 @@ export class SignalRService {
         if (!response.ok) throw new Error('UnregisterConnection failed');
     }
 
-    async sendMessage(senderId: string, receiverId: string, message: string) {
+    async sendMessage(message: Message) {
         try {
             const response = await fetch(`${this.apiBaseUrl}/SendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ SenderId: senderId, ReceiverId: receiverId, Message: message })
+                body: JSON.stringify({
+                    SenderId: message.senderId,
+                    ReceiverId: message.receiverId,
+                    Message: message.message,
+                    SendAt: message.sendAt.toISOString()
+                })
             });
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText);
             }
-            console.log(`Message sent successfully from ${senderId} to ${receiverId}: ${message}`);
+            console.log(`Message sent successfully from ${message.senderId} to ${message.receiverId}: ${message.message}`);
         } catch (error) {
-            console.error(`Error sending message from ${senderId} to ${receiverId}:`, error);
+            console.error(`Error sending message from ${message.senderId} to ${message.receiverId}:`, error);
             throw error;
         }
     }

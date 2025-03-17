@@ -7,7 +7,7 @@
 
     <div class="messages-container" ref="messagesContainer">
       <div 
-        v-for="(message, index) in signalR.messagesValue" 
+        v-for="(message, index) in filteredMessages" 
         :key="index"
         :class="['message', message.senderId === senderId ? 'sent' : 'received']"
       >
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, computed } from 'vue';
 import { formatTime } from '~/utils/helpers/dateHelper';
 import { UseSignalR } from '~/composables/useSignalR';
 import '~/assets/components/chat.css';
@@ -59,6 +59,14 @@ console.log('Chat component - IDs:', {
   receiverId: props.receiverId
 });
 
+const filteredMessages = computed(() => {
+  const chatPair = [props.senderId, props.receiverId].sort().join(',');
+  return signalR.messagesValue.filter((message) => {
+    const messagePair = [message.senderId, message.receiverId].sort().join(',');
+    return chatPair === messagePair;
+  });
+});
+
 const sendMessage = async () => {
   if (!newMessage.value.trim() || !signalR.isConnectedValue) return;
 
@@ -68,21 +76,24 @@ const sendMessage = async () => {
       receiverId: props.receiverId,
       message: newMessage.value.trim(),
       sendAt: new Date(Date.now()),
-    }
+    };
     console.log(message);
     await signalR.sendMessage(message);
     newMessage.value = '';
     
-    nextTick(() => {
-      if (messagesContainer.value) {
-        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-      }
-    });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Failed to send message:', errorMessage);
     alert(errorMessage);
   }
+};
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+  });
 };
 
 onMounted(async () => {
@@ -94,4 +105,8 @@ onMounted(async () => {
     console.error('Failed to start SignalR connection:', error);
   }
 });
+
+watch(filteredMessages, () => {
+  scrollToBottom();
+}, { deep: true });
 </script>

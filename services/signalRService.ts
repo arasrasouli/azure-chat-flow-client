@@ -18,9 +18,9 @@ export class SignalRService {
         });
         if (!response.ok) throw new Error(`Negotiate failed: ${response.status}`);
 
-        const { url, accessToken } = await response.json() as NegotiateResponse;
+        const { Url, AccessToken } = await response.json() as NegotiateResponse;
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(url, { accessTokenFactory: () => accessToken })
+            .withUrl(Url, { accessTokenFactory: () => AccessToken })
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Debug)
             .build();
@@ -30,17 +30,17 @@ export class SignalRService {
     }
 
     onReceiveMessage(callback: (message: Message) => void) {
-        this.connection?.on('ReceiveMessage', (senderId: string, receiverId: string, message: string, sendAt: string) => {
+        this.connection?.on('ReceiveMessage', (message) => {
             try {
                 const receivedMessage: Message = {
-                    senderId: senderId,
-                    receiverId: receiverId,
-                    message: message,
-                    sendAt: new Date(sendAt)
+                    senderId: message.SenderId,
+                    receiverId: message.ReceiverId,
+                    message: message.Message,
+                    sendAt: new Date(message.SendAt)
                 };
                 callback(receivedMessage);
             } catch (error) {
-                console.error(`Error processing received message from ${senderId} to ${receiverId}:`, error);
+                console.error(`Error processing received message from ${message.senderId} to ${message.receiverId}:`, error);
             }
         });
     }

@@ -1,4 +1,4 @@
 export interface NegotiateResponse {
-    url: string;
-    accessToken: string;
+    Url: string;
+    AccessToken: string;
 }

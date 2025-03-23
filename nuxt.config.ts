@@ -26,7 +26,7 @@ export default defineNuxtConfig({
       AZURE_SCOPES: process.env.NUXT_PUBLIC_AZURE_SCOPES || 'User.Read.All',     
     },
   },
-  plugins: ["~/plugins/msal.ts", "~/plugins/buffer-polyfill.ts"],
+  plugins: ['~/plugins/signalR.ts', '~/plugins/msal.ts', '~/plugins/buffer-polyfill.ts'],
   build: {
     extend(config, { isClient }) {
       if (isClient) {
@@ -40,5 +40,6 @@ export default defineNuxtConfig({
   },
   devServer: {
     port: 3001
-  }  
+  },
+  ssr: false,
 });

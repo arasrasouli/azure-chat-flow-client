@@ -6,24 +6,42 @@
 </template>
 
 <script setup>
-import { useMSAuth } from "~/composables/useMSAuth";
-import { useRouter } from "vue-router";
-import "~/assets/components/login.css";
+import { useMSAuth } from '~/composables/useMSAuth';
+import { useRouter } from 'vue-router';
+import { watch } from 'vue';
+import '~/assets/components/login.css';
 
 const { isAuthenticated, signIn, signOut } = useMSAuth();
 const router = useRouter();
-const emit = defineEmits(["auth-updated"]);
+const emit = defineEmits(['auth-updated']);
 
 const handleSignIn = async () => {
   await signIn();
-  emit("auth-updated", true);
-  router.push("/dashboard");
+  afterSignIn();
 };
+
+const afterSignIn = async () => {
+  emit('auth-updated', true);
+  router.push('/dashboard');
+}; 
 
 const handleSignOut = async () => {
   await signOut();
-  emit("auth-updated", false);
-  router.push("/");
+  afterSignOut();
 };
 
+const afterSignOut = async () => {
+  emit('auth-updated', false);
+  router.push('/');
+}; 
+
+watch(isAuthenticated, (newVal) => {
+  if (newVal) {
+    afterSignIn();
+    console.log('Sign-in detected in Login component');
+  } else {
+    afterSignOut();
+    console.log('Sign-out detected in Login component');
+  }
+});
 </script>

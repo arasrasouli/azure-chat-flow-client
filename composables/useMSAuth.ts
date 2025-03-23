@@ -13,6 +13,19 @@ export const useMSAuth = () => {
     authenticated.value = msAuth.isAuthenticated();
   };
 
+  window.addEventListener('storage', async (event) => {
+    if (event.key === 'msalSignOut' && event.newValue === 'true') {
+      authenticated.value = false;
+      await msAuth.signOut();
+      console.log('Sign-out detected and enforced from another tab');
+    //TODO: Improve condition
+    } else if (event.key && event.key.indexOf('login.windows.net-refreshtoken') > 0 ) { 
+      await msAuth.initialize();
+      authenticated.value = msAuth.isAuthenticated();
+      console.log('Sign-in detected from another tab');
+    }
+  });
+
   return {
     initialize: async () => {
       await msAuth.initialize();

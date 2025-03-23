@@ -1,15 +1,15 @@
 <template>
   <div class="chat-container">
     <header class="chat-header">
-      <span class="sender-user">{{ senderName }}</span>
-      <span class="receiver-user">{{ receiverName }}</span>
+      <span class="sender-user">{{ props.senderName }}</span>
+      <span class="receiver-user">{{ props.receiverName }}</span>
     </header>
 
     <div class="messages-container" ref="messagesContainer">
       <div 
         v-for="(message, index) in filteredMessages" 
         :key="index"
-        :class="['message', message.senderId === senderId ? 'sent' : 'received']"
+        :class="['message', message.senderId === props.senderId ? 'sent' : 'received']"
       >
         <div class="message-content">
           <span class="message-text">{{ message.message }}</span>
@@ -37,11 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, computed } from 'vue';
+import { ref, nextTick, computed, inject, onMounted } from 'vue';
 import { formatTime } from '~/utils/helpers/dateHelper';
-import { UseSignalR } from '~/composables/useSignalR';
-import '~/assets/components/chat.css';
 import type { Message } from '~/types/messageType';
+import type { UseSignalR } from '~/composables/useSignalR';
+import '~/assets/components/chat.css';
 
 const props = defineProps<{
   senderId: string;
@@ -50,14 +50,11 @@ const props = defineProps<{
   receiverName: string;
 }>();
 
-const signalR = new UseSignalR();
+const signalR = inject<UseSignalR>('signalR')!;
 const newMessage = ref('');
 const messagesContainer = ref<HTMLElement | null>(null);
 
-console.log('Chat component - IDs:', {
-  senderId: props.senderId,
-  receiverId: props.receiverId
-});
+console.log('Chat component props:', props);
 
 const filteredMessages = computed(() => {
   const chatPair = [props.senderId, props.receiverId].sort().join(',');
@@ -77,10 +74,9 @@ const sendMessage = async () => {
       message: newMessage.value.trim(),
       sendAt: new Date(Date.now()),
     };
-    console.log(message);
     await signalR.sendMessage(message);
     newMessage.value = '';
-    
+    scrollToBottom();
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Failed to send message:', errorMessage);
@@ -95,16 +91,6 @@ const scrollToBottom = () => {
     }
   });
 };
-
-onMounted(async () => {
-  try {
-    if (!signalR.isConnectedValue) {
-      await signalR.startConnection(props.senderId);
-    }
-  } catch (error) {
-    console.error('Failed to start SignalR connection:', error);
-  }
-});
 
 watch(filteredMessages, () => {
   scrollToBottom();

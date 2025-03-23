@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useAzureUsers } from '~/composables/useAzureUsers';
 import '~/assets/components/userList.css';
 import type { AdUser } from '~/types/userType';
@@ -30,12 +30,9 @@ const emit = defineEmits(['user-selected']);
 const { users, errorMessage, getDomainUsers } = useAzureUsers();
 const selectedUser = ref('');
 
-console.log('UserList props:', { currentUser: props.currentUser });
-console.log('Initial errorMessage:', errorMessage.value);
-
 onMounted(async () => {
   await getDomainUsers();
-  console.log('Post-fetch errorMessage:', errorMessage.value);
+  console.log('Fetched users:', users.value);
 });
 
 const filteredUsers = computed(() => {
@@ -49,6 +46,7 @@ const emitSelectedUser = () => {
   );
   
   if (selected) {
+    console.log('Emitting selected user:', selected);
     emit('user-selected', selected);
   } else {
     console.warn('No user found for:', selectedUser.value);

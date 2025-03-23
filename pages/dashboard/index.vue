@@ -21,22 +21,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject, watch } from 'vue';
 import { useMSAuth } from '~/composables/useMSAuth';
-import { UseSignalR } from '~/composables/useSignalR';
+import { useRouter } from 'vue-router';
 import UserList from '~/components/UserList.vue';
 import Chat from '~/components/Chat.vue';
-import '~/assets/pages/dashboard.css';
+import type { UseSignalR } from '~/composables/useSignalR';
 import type { AdUser } from '~/types/userType';
 
 const { initialize, signIn, isAuthenticated, getAccounts } = useMSAuth();
-const signalR = new UseSignalR();
+const signalR = inject<UseSignalR>('signalR')!;
+const router = useRouter();
 
 const currentUserName = ref<string>('');
-const currentUserEmail = ref<string>('');
 const currentUserId = ref<string>('');
 const chatUserId = ref<string>('');
 const chatUserName = ref<string>('');
+
+onMounted(async () => {
+  await initialize();
+  updateUserData();
+});
+
+const updateUserData = async () => {
+  if (isAuthenticated.value) {
+    const accounts = getAccounts();
+    if (accounts.length > 0) {
+      currentUserName.value = accounts[0]?.name || 'Unknown User';
+      currentUserId.value = accounts[0]?.idTokenClaims?.oid || accounts[0]?.localAccountId || '';
+    } else {
+      await initialize();
+      const accounts = getAccounts();
+      if (accounts.length > 0) {
+        currentUserName.value = accounts[0]?.name || 'Unknown User';
+        currentUserId.value = accounts[0]?.idTokenClaims?.oid || accounts[0]?.localAccountId || '';
+      }
+    }
+  } else {
+    currentUserName.value = '';
+    currentUserId.value = '';
+    chatUserId.value = '';
+    chatUserName.value = '';
+    router.push('/');
+  }
+};
+
+watch(isAuthenticated, async (newVal) => {
+  console.log('isAuthenticated changed in Dashboard:', newVal);
+  await updateUserData();
+});
 
 const toggleConnectionHandler = async () => {
   try {
@@ -56,28 +89,4 @@ const handleUserSelected = (user: AdUser) => {
   chatUserId.value = user.id;
   chatUserName.value = user.displayName;
 };
-
-onMounted(async () => {
-  try {
-    await initialize();
-    if (isAuthenticated.value) {
-      const accounts = await getAccounts();
-      if (accounts.length > 0) {
-        currentUserName.value = accounts[0]?.name || 'Unknown User';
-        currentUserEmail.value = accounts[0]?.username || 'unknown@domain.com';
-        currentUserId.value = accounts[0]?.idTokenClaims?.oid || accounts[0]?.localAccountId || '';
-        console.log('Dashboard user:', { 
-          name: currentUserName.value, 
-          email: currentUserEmail.value, 
-          id: currentUserId.value,
-          rawAccount: accounts[0]
-        });
-      } else {
-        console.warn('No accounts found after authentication');
-      }
-    }
-  } catch (error) {
-    console.error('Initialization or SignalR connection failed:', error);
-  }
-});
 </script>

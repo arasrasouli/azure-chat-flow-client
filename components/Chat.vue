@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, inject, onMounted } from 'vue';
+import { ref, nextTick, computed, inject, onMounted, watch } from 'vue';
 import { formatTime } from '~/utils/helpers/dateHelper';
 import type { Message } from '~/types/messageType';
 import type { UseSignalR } from '~/composables/useSignalR';
@@ -56,11 +56,15 @@ const messagesContainer = ref<HTMLElement | null>(null);
 
 console.log('Chat component props:', props);
 
+const messages = signalR.messages;
+
 const filteredMessages = computed(() => {
-  const chatPair = [props.senderId, props.receiverId].sort().join(',');
-  return signalR.messagesValue.filter((message) => {
-    const messagePair = [message.senderId, message.receiverId].sort().join(',');
-    return chatPair === messagePair;
+  console.log('Current messages:', messages.value);
+  return messages.value.filter((message) => {
+    return (
+      (message.senderId === props.senderId && message.receiverId === props.receiverId) ||
+      (message.senderId === props.receiverId && message.receiverId === props.senderId)
+    );
   });
 });
 
@@ -95,4 +99,19 @@ const scrollToBottom = () => {
 watch(filteredMessages, () => {
   scrollToBottom();
 }, { deep: true });
+
+onMounted(async () => {
+  if (!props.receiverId) {
+    console.error('No receiver ID provided');
+    return;
+  }
+  try {
+    messages.value = [];
+    await signalR.getChatHistory(props.senderId, props.receiverId, 50);
+    console.log('Chat history loaded:', messages.value);
+    scrollToBottom();
+  } catch (error) {
+    console.error('Failed to load chat history:', error);
+  }
+});
 </script>

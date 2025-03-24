@@ -1,6 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import type { Message } from '~/types/messageType';
 import type { NegotiateResponse } from '~/types/signalRTypes';
+import { mapToMessage } from '~/utils/mapper/messageMapper';
 
 export class SignalRService {
     private connection: signalR.HubConnection | null = null;
@@ -32,12 +33,7 @@ export class SignalRService {
     onReceiveMessage(callback: (message: Message) => void) {
         this.connection?.on('ReceiveMessage', (message) => {
             try {
-                const receivedMessage: Message = {
-                    senderId: message.SenderId,
-                    receiverId: message.ReceiverId,
-                    message: message.Message,
-                    sendAt: new Date(message.SendAt)
-                };
+                const receivedMessage: Message = mapToMessage(message);
                 callback(receivedMessage);
             } catch (error) {
                 console.error(`Error processing received message from ${message.senderId} to ${message.receiverId}:`, error);
@@ -89,6 +85,30 @@ export class SignalRService {
             console.log(`Message sent successfully from ${message.senderId} to ${message.receiverId}: ${message.message}`);
         } catch (error) {
             console.error(`Error sending message from ${message.senderId} to ${message.receiverId}:`, error);
+            throw error;
+        }
+    }
+
+    async getChatHistory(senderId: string, receiverId: string, maxResults?: number): Promise<any[]> {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/GetChatHistory`, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    SenderId: senderId,
+                    ReceiverId: receiverId,
+                    MaxResults: maxResults ?? 0,
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch chat history: ${response.statusText}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching chat history:', error);
             throw error;
         }
     }

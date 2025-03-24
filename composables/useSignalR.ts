@@ -1,6 +1,7 @@
 import { ref, type Ref } from 'vue';
 import { SignalRService } from '~/services/signalRService';
 import type { Message } from '~/types/messageType';
+import { mapToMessage } from '~/utils/mapper/messageMapper';
 
 export class UseSignalR {
   private readonly signalRService: SignalRService;
@@ -41,8 +42,7 @@ export class UseSignalR {
 
       this.signalRService.onReceiveMessage((receivedMessage) => {
         console.log('Received message in UseSignalR:', receivedMessage);
-        this.messages.value.push(receivedMessage);
-        localStorage.setItem('signalRMessages', JSON.stringify(this.messages.value));
+        this.pushMessage(receivedMessage);
       });
 
       this.signalRService.onClose(async () => {
@@ -88,11 +88,16 @@ export class UseSignalR {
   async sendMessage(message: Message): Promise<void> {
     try {
       await this.signalRService.sendMessage(message);
-      this.messages.value.push(message);
-      localStorage.setItem('signalRMessages', JSON.stringify(this.messages.value));
+      this.pushMessage(message);
     } catch (error) {
       throw error;
     }
+  }
+
+  async getChatHistory(senderId: string, receiverId: string, maxResults?: number): Promise<void> {
+    const rawHistory = await this.signalRService.getChatHistory(senderId, receiverId, maxResults);
+    const history: Message[] = rawHistory.map(mapToMessage);
+    this.pushMessage(...history);
   }
 
   private handleStorageChange(event: StorageEvent) {
@@ -117,5 +122,13 @@ export class UseSignalR {
       console.error('Failed to sign out SignalR:', error);
       throw error;
     }
+  }
+
+  private pushMessage(...newMessages: Message[]): void {
+    const uniqueMessages = newMessages
+      .filter((msg) => !msg.rowKey || !this.messages.value.some((existing) => existing.rowKey === msg.rowKey));
+  
+    this.messages.value.push(...uniqueMessages);
+    localStorage.setItem('signalRMessages', JSON.stringify(this.messages.value));
   }
 }

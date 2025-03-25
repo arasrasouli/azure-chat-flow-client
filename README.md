@@ -16,20 +16,38 @@
 
 
 
-The **Azure Chat Flow Client App** is a Vue.js and Nuxt.js powered frontend for a chat application using Azure SignalR for real-time messaging. Integrated with Azure AD for authentication and Azure Table Storage for chat message storage. Designed for scalable and secure communication in cloud environments..  
+The **Azure Chat Flow Client App** is a modern chat application frontend built with **Vue.js** and **Nuxt.js**, leveraging **Azure SignalR** for real-time messaging. It integrates **Microsoft Authentication (MSAuth)** via **Microsoft Entra ID** for secure user authentication and uses **Azure Table Storage** for persistent chat message storage. Designed for scalable, secure, and efficient communication in cloud environments.
 
-## Features  
-- **User Authentication** – Secure login with **Microsoft Authentication (MSAuth)**.  
-- **File Upload** – Upload `.txt` files directly to **Azure Blob Storage**.
-- **UNDER DEVELOPMENT...**
+### Related Repositories
+[Azure ChatFlow Server](https://github.com/arasrasouli/Azure-ChatFlow-Server)
 
-## Technologies Used  
-- **Nuxt 3**  
-- **Vue 3**  
-- **TypeScript**  
-- **Azure SignalR**  
-- **MSAuth (Microsoft Authentication)**
-- **Microsoft Entra ID**
+## Features
+- **User Authentication**: Secure login powered by **Microsoft Authentication (MSAuth)** with **Microsoft Entra ID**.
+- **Real-Time Messaging**: Send and receive messages instantly using **Azure SignalR**.
+- **Chat History**: Load and display chat history from **Azure Table Storage** with deduplication based on unique `rowKey`.
+- **Local Storage Sync**: Persist chat messages locally for offline access and seamless session restoration.
+- **UNDER DEVELOPMENT**: Additional features in progress (e.g., notification system, file/photo upload, chat UI improvements).
+
+## Technologies Used
+- **Nuxt 3**: Server-side rendering and static site generation for optimal performance.
+- **Vue 3**: Reactive and component-based frontend framework.
+- **Vue.js**: Powers the interactive UI components and reactivity (aligned with Vue 3).
+- **TypeScript**: Static typing for robust, maintainable code.
+- **Azure SignalR**: Real-time messaging service for scalable communication.
+- **MSAuth (Microsoft Authentication)**: Secure authentication and user listing from Microsoft Entra ID.
+- **Azure Table Storage**: Persistent storage for chat history.
+- **Azure Blob Storage**: Planned for future file/photo upload capabilities.
+
+## Key Processes
+- **Authentication Service**: Handles user login via **MSAuth** with **Microsoft Entra ID**, providing secure access and user identity.
+- **User Management Service**: Retrieves a list of domain users from **Microsoft Entra ID** for chat participant selection (via `UserList` component).
+- **SignalR Connection Service**: Manages real-time connections to **Azure SignalR** through `UseSignalR`, ensuring stable communication with the backend.
+- **Messaging Service**: Facilitates sending, receiving, and loading chat history using `SignalRService`, with messages stored in **Azure Table Storage** and deduplicated by `rowKey`.
+- **Real-Time Synchronization**: Keeps chats, SignalR connection status, and user login states in sync across clients, leveraging `UseSignalR` and `localStorage`.
+- **Notification Service**: Planned feature to manage real-time alerts for new messages or events.
+- **File Management Service**: Planned feature to handle file/photo uploads using **Azure Blob Storage**.
+
+## Project Structure
 
 
 ### Environment Variables  
@@ -51,8 +69,6 @@ NUXT_PUBLIC_AZURE_SIGNALR_HUB_NAME=chatHub
 NUXT_PUBLIC_API_BASE_URL=<api-url>
 NUXT_PUBLIC_AZURE_SCOPES="User.Read.All"
 ```
-
-## Related Repositories
 
 
 
